@@ -1,0 +1,65 @@
+﻿<Page
+    x:Class="MusicApp.Views.Sign_Up"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:MusicApp.Views"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d"
+    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+    
+    
+    <Grid>
+        <StackPanel HorizontalAlignment="Right" Margin="50">
+            <Image Source="../Assets/song1.jpg" Width="500" Height="595"></Image>
+        </StackPanel>
+        <TextBlock Text="Create new account" FontSize="25" Margin="10,8,0,30" FontWeight="Bold"/>
+        <ScrollViewer>
+            <StackPanel Margin="50,90,0,0" HorizontalAlignment="Left" Width="450">
+                <TextBox x:Name="Email" Header="Email" PlaceholderText="Enter your email" />
+                <TextBlock x:Name="email" Foreground="Red"/>
+                <PasswordBox x:Name="Password" Header="Password" Margin="0, 20, 0 , 0" PlaceholderText="Enter your password"/>
+                <TextBlock x:Name="password" Foreground="Red"/>
+                <Grid Margin="0, 20, 0 , 0">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="0.5*"/>
+                        <ColumnDefinition Width="0.5*"/>
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="0.5*"/>
+                        <RowDefinition Height="0.5*"/>
+                    </Grid.RowDefinitions>
+                    <TextBox x:Name="FirstName" Header="First Name" Grid.Row="0"  Grid.Column="0" PlaceholderText="Enter your firstname" Margin="0, 0, 10, 0"/>
+                    <TextBlock x:Name="firstName" Grid.Row="1" Grid.Column="0" Foreground="Red"/>
+                    <TextBox x:Name="LastName" Header="Last Name" Grid.Row="0" Grid.Column="1" PlaceholderText="Enter your lastname"/>
+                    <TextBlock x:Name="lastName" Grid.Row="1" Grid.Column="1" Foreground="Red"/>
+                </Grid>
+                <TextBox x:Name="AvatarUrl" Header="Avatar Link" Margin="0, 20, 0 , 0"/>
+                <TextBlock x:Name="avatar" Foreground="Red"/>
+
+                <Image x:Name="Avatar" Width="150" Height="100" HorizontalAlignment="Left" Margin="20"/>
+
+                <Button Content="Capture Your Photo" Margin="0, 20, 0 , 0" Click="Choose_Image"/>
+                <TextBox x:Name="Phone" Header="Phone Number" PlaceholderText="Enter your phone" Margin="0, 20, 0 , 0"/>
+                <TextBlock x:Name="phone" Foreground="Red"/>
+                <TextBox x:Name="Address" Header="Address" AcceptsReturn="True" Height="100" PlaceholderText="Enter your address" Margin="0, 20, 0 , 0"/>
+                <TextBlock x:Name="address" Foreground="Red"/>
+                <TextBox x:Name="Introduction" Header="Introduction" PlaceholderText="Enter your introduction" AcceptsReturn="True" Height="100" Margin="0, 20, 0 , 0"/>
+                <TextBlock x:Name="introduction" Foreground="Red"/>
+                <TextBlock Text="Gender" Margin="0, 20, 0 , 0"/>
+                <StackPanel Orientation="Horizontal" Margin="0, 20, 0 , 0">
+                    <RadioButton Content="Male" Tag="1" Checked="RadioButton_Checked"/>
+                    <RadioButton Content="Female" Tag="0" Checked="RadioButton_Checked"/>
+                    <RadioButton Content="Other" Tag="2" IsChecked="True" Checked="RadioButton_Checked"/>
+                </StackPanel>
+                <CalendarDatePicker x:Name="BirthdayPicker" Header="Birthday" Width="250" Margin="0, 20, 0 , 0" DateChanged="BirthdayPicker_DateChanged"/>
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" Margin="0, 40, 0 , 0">
+                    <Button Content="Sign up" Width="100" Margin="0, 0, 20 , 0" Click="Submit"/>
+                    <Button Content="Sign in" Width="100" Click="Sign_in" />
+                </StackPanel>
+                <TextBlock/><TextBlock/><TextBlock/>
+            </StackPanel>
+        </ScrollViewer>
+       
+    </Grid>
+</Page>

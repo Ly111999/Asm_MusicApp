@@ -1,0 +1,38 @@
+﻿<Page
+    x:Class="MusicApp.Views.Sign_In"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:MusicApp.Views"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d"
+    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}" Loaded="Auto_Login">
+
+    <Grid>
+        <StackPanel HorizontalAlignment="Right" Margin="50">
+            <Image Source="../Assets/song1.jpg" Width="500" Height="595"></Image>
+        </StackPanel>
+        <TextBlock Text="Login account" FontSize="25" Margin="10,7,0,0" FontWeight="Bold"/>
+
+        <StackPanel HorizontalAlignment = "Left" Margin="0,130,0,0">
+            <TextBlock Text="Music App" FontSize="25" Margin="250,0,0,40"/>
+
+            <StackPanel Orientation="Vertical" Margin="150,0,0,0">
+                <TextBox Header="Email" x:Name="Email" PlaceholderText="Enter your email" Width="350" />
+                <TextBlock Foreground="Red" x:Name="email" />
+                <PasswordBox Header = "Password" x:Name="Password" PlaceholderText="Enter your password" Width="350"/>
+                <TextBlock Foreground="Red" x:Name="password"/>
+            </StackPanel>
+            <StackPanel Orientation = "Horizontal" Margin="206,10,0,0">
+                <Button Content="Sign In" Width="100" HorizontalAlignment="Left" VerticalAlignment="Top" Click="Button_submit"/>
+                <Button Content = "Sign Up" Width="100" HorizontalAlignment="Left" Margin="20,0,0,0" VerticalAlignment="Top" Click="Sign_up" />
+            </StackPanel>
+
+            <Button Width="100" HorizontalAlignment="Left" Margin="60,20,0,0" Click="Home">
+                <SymbolIcon Symbol="Home"></SymbolIcon>
+            </Button>
+          
+        </StackPanel>
+
+    </Grid>
+</Page>
