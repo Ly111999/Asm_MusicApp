@@ -43,7 +43,11 @@ namespace MusicApp
             {
                 StorageFile file = await folder.GetFileAsync("token.txt");
                 await file.DeleteAsync();
-                Debug.WriteLine("you logouted !!!");
+                var dialog = new Windows.UI.Popups.MessageDialog("Logout success.See you again!!!");
+                dialog.Commands.Add(new Windows.UI.Popups.UICommand("Close") { Id = 1 });
+                dialog.CancelCommandIndex = 1;
+                Debug.WriteLine(" logouted !!!");
+                await dialog.ShowAsync();
             }
         }
 
@@ -64,14 +68,6 @@ namespace MusicApp
                 case "Home":
                     CurrentTag = "Home";
                     this.My_Frame.Navigate(typeof(Views.Home));
-                    break;
-                case "Register":
-                    CurrentTag = "Register";
-                    this.My_Frame.Navigate(typeof(Views.Sign_Up));
-                    break;
-                case "Login":
-                    CurrentTag = "Login";
-                    this.My_Frame.Navigate(typeof(Views.Sign_In));
                     break;
                 case "MySong":
                     CurrentTag = "MySong";

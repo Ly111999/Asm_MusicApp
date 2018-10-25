@@ -10,6 +10,7 @@ using System.Text.RegularExpressions;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
 using Windows.Storage;
+using Windows.UI;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
@@ -36,50 +37,57 @@ namespace MusicApp.Views
             this.InitializeComponent();
         }
 
-        private void Home(object sender, RoutedEventArgs e)
-        {
-            var rootFrame = Window.Current.Content as Frame;
-            rootFrame.Navigate(typeof(MainPage));
-        }
         
         private async void Button_submit(object sender, RoutedEventArgs e)
         {
-            Dictionary<string, string> login_handle = new Dictionary<string, string>();
-            login_handle.Add("email", this.Email.Text);
-            login_handle.Add("password", this.Password.Password);
+            var checkEmail = ValidateEmail(this.Email.Text, email);
+            ValidatePassword(Password.Password, password);
+            if (checkEmail)
+            {
+                
+                Dictionary<string, string> login_handle = new Dictionary<string, string>();
+                login_handle.Add("email", this.Email.Text);
+                login_handle.Add("password", this.Password.Password);
 
-            HttpClient httpClient = new HttpClient();
-            StringContent stringContent = new StringContent(JsonConvert.SerializeObject(login_handle), System.Text.Encoding.UTF8, "application/json");
-            var response = httpClient.PostAsync(APIHandle.API_LOGIN, stringContent).Result;
-            var responseContent = await response.Content.ReadAsStringAsync();
-            if (response.StatusCode == System.Net.HttpStatusCode.Created)
-            {
-                Debug.WriteLine("Login Success");
-                Debug.WriteLine(responseContent);
-                TokenResponse tokenResponse = JsonConvert.DeserializeObject<TokenResponse>(responseContent); //read token
-                StorageFolder folder = ApplicationData.Current.LocalFolder;// save token file
-                StorageFile storageFile = await folder.CreateFileAsync("token.txt", CreationCollisionOption.ReplaceExisting);
-                await FileIO.WriteTextAsync(storageFile, responseContent);
-                var rootFrame = Window.Current.Content as Frame;
-                rootFrame.Navigate(typeof(MainPage));
-            }
-            else
-            {
-                ErrorResponse errorResponse = JsonConvert.DeserializeObject<ErrorResponse>(responseContent);
-                if (errorResponse.error.Count > 0)
+                HttpClient httpClient = new HttpClient();
+                StringContent stringContent = new StringContent(JsonConvert.SerializeObject(login_handle), System.Text.Encoding.UTF8, "application/json");
+                var response = httpClient.PostAsync(APIHandle.API_LOGIN, stringContent).Result;
+                var responseContent = await response.Content.ReadAsStringAsync();
+                if (response.StatusCode == System.Net.HttpStatusCode.Created)
                 {
-                    foreach (var key in errorResponse.error.Keys)
+                    Debug.WriteLine("Login Success");
+                    Debug.WriteLine(responseContent);
+                    TokenResponse tokenResponse = JsonConvert.DeserializeObject<TokenResponse>(responseContent); //read token
+                    StorageFolder folder = ApplicationData.Current.LocalFolder;// save token file
+                    StorageFile storageFile = await folder.CreateFileAsync("token.txt", CreationCollisionOption.ReplaceExisting);
+                    await FileIO.WriteTextAsync(storageFile, responseContent);
+
+                    var rootFrame = Window.Current.Content as Frame;
+                    rootFrame.Navigate(typeof(MainPage));
+                }
+                else
+                {
+                    ErrorResponse errorResponse = JsonConvert.DeserializeObject<ErrorResponse>(responseContent);
+                    if (errorResponse.error.Count > 0)
                     {
-                        var objectBykey = this.FindName(key);
-                        var value = errorResponse.error[key];
-                        if (objectBykey != null)
+                        foreach (var key in errorResponse.error.Keys)
                         {
-                            TextBlock textBlock = objectBykey as TextBlock;
-                            textBlock.Text = "* " + value;
+                            var objectBykey = this.FindName(key);
+                            var value = errorResponse.error[key];
+                            if (objectBykey != null)
+                            {
+                                TextBlock textBlock = objectBykey as TextBlock;
+                                textBlock.Text = "* " + value;
+                            }
                         }
                     }
                 }
             }
+            else
+            {
+                return;
+            }
+            
         }
 
         public static async void DoLogin()
@@ -118,7 +126,7 @@ namespace MusicApp.Views
                 rootFrame.Navigate(typeof(MainPage));
 
 
-                Debug.WriteLine("Da dang nhap thanh cong");
+                Debug.WriteLine("Success");
             }
             else
             {
@@ -126,43 +134,66 @@ namespace MusicApp.Views
             }
         }
 
-
-
-
-
         private void Sign_up(object sender, RoutedEventArgs e)
         {
             var rootFrame = Window.Current.Content as Frame;
             rootFrame.Navigate(typeof(Views.Sign_Up));
         }
 
-        public void ValidateEmail()
-        {
-            var inputEmail = Email.Text;
-            if (string.IsNullOrWhiteSpace(inputEmail) || !Regex.IsMatch(inputEmail, @"\w+([-+.']\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*"))
-            {
-                email.Text =  "The email is invalid";
-                return;
-            }
-        }
-
-        public void ValidatePassword()
-        {
-            var inputPassword = Password.Password;
-            if (string.IsNullOrWhiteSpace(inputPassword))
-            {
-                password.Text = "The password is invalid";
-            }
-
-            if (inputPassword.Length < 8)
-            {
-                password.Text = "Password is too short";
-            }
-        }
-
         private async void Auto_Login(object sender, RoutedEventArgs e)
         {
             DoLogin();
         }
+
+        public static bool ValidateEmail(string input, TextBlock textBlock)
+        {
+            Regex regex = new Regex(@"^[_A-Za-z0-9-\\+]+(\\.[_A-Za-z0-9-]+)*@"
+                                    + "[A-Za-z0-9-]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$");
+            if (string.IsNullOrWhiteSpace(input))
+            {
+                textBlock.Text = "*Email can't be empty or null";
+                textBlock.Foreground = new SolidColorBrush(Colors.Red);
+
+                return false;
+            }
+            else if (!regex.IsMatch(input))
+            {
+                textBlock.Text = "*Invalid: example@gmail.com";
+                textBlock.Foreground = new SolidColorBrush(Colors.Red);
+
+                return false;
+            }
+            else
+            {
+                textBlock.Text = "";
+                return true;
+            }
+            
+        }
+
+        public static bool ValidatePassword(string input, TextBlock textBlock)
+        {
+            if (input.Length > 0)
+            {
+                if (input.Length < 6 || input.Length > 24)
+                {
+                    textBlock.Text = "*Must be from 6 to 24 characters";
+                    textBlock.Foreground = new SolidColorBrush(Colors.Red);
+                    return false;
+                }
+                else
+                {
+                    textBlock.Text = "";
+                    return true;
+                }
+            }
+            else
+            {
+                textBlock.Text = "* Password can't be empty or null";
+                textBlock.Foreground = new SolidColorBrush(Colors.Red);
+                return false;
+            }
+        }
+
     }
 }

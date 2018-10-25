@@ -12,6 +12,8 @@ using Windows.Foundation;
 using Windows.Foundation.Collections;
 using Windows.Media.Capture;
 using Windows.Storage;
+using Windows.Storage.Pickers;
+using Windows.UI;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
@@ -118,45 +120,95 @@ namespace MusicApp.Views
 
         private async void Submit(object sender, RoutedEventArgs e)
         {
-            // validate data.
-            this.currentMember.firstName = this.FirstName.Text;
-            this.currentMember.lastName = this.LastName.Text;
-            this.currentMember.avatar = this.AvatarUrl.Text;
-            this.currentMember.address = this.Address.Text;
-            this.currentMember.introduction = this.Introduction.Text;
-            this.currentMember.phone = this.Phone.Text;
-            this.currentMember.email = this.Email.Text;
-            this.currentMember.password = this.Password.Password;
-
-            string jsonMember = JsonConvert.SerializeObject(this.currentMember);
-
-            HttpClient httpClient = new HttpClient();
-            var content = new StringContent(jsonMember, Encoding.UTF8, "application/json");
-            var response = httpClient.PostAsync(APIHandle.MEMBER_REGISTER, content);
-            var contents = await response.Result.Content.ReadAsStringAsync();
-            if (response.Result.StatusCode == HttpStatusCode.Created)
+            //validate client
+            var checkEmail = ValidateEmail(this.Email.Text, email);
+            ValidatePassword(Password.Password, password);
+            ValidateText(FirstName.Text, firstName);
+            ValidateText(LastName.Text, lastName);
+            ValidateText(AvatarUrl.Text, avatar);
+            ValidatePhone(Phone.Text, phone);
+            ValidateText(Address.Text, address);
+            if (checkEmail)
             {
-                var rootFrame = Window.Current.Content as Frame;
-                rootFrame.Navigate(typeof(Views.Sign_In));
-            }
-            else
-            {
-                ErrorResponse errorsResponse = JsonConvert.DeserializeObject<ErrorResponse>(contents);
-                if (errorsResponse.error.Count > 0)
+                // validate data.
+                this.currentMember.firstName = this.FirstName.Text;
+                this.currentMember.lastName = this.LastName.Text;
+                this.currentMember.avatar = this.AvatarUrl.Text;
+                this.currentMember.address = this.Address.Text;
+                this.currentMember.introduction = this.Introduction.Text;
+                this.currentMember.phone = this.Phone.Text;
+                this.currentMember.email = this.Email.Text;
+                this.currentMember.password = this.Password.Password;
+
+                string jsonMember = JsonConvert.SerializeObject(this.currentMember);
+
+                HttpClient httpClient = new HttpClient();
+                var content = new StringContent(jsonMember, Encoding.UTF8, "application/json");
+                var response = httpClient.PostAsync(APIHandle.MEMBER_REGISTER, content);
+                var contents = await response.Result.Content.ReadAsStringAsync();
+                if (response.Result.StatusCode == HttpStatusCode.Created)
                 {
-                    foreach (var key in errorsResponse.error.Keys)
+                    var rootFrame = Window.Current.Content as Frame;
+                    rootFrame.Navigate(typeof(Views.Sign_In));
+                }
+                else
+                {
+                    ErrorResponse errorsResponse = JsonConvert.DeserializeObject<ErrorResponse>(contents);
+                    if (errorsResponse.error.Count > 0)
                     {
-                        var objectBykey = this.FindName(key);
-                        var value = errorsResponse.error[key];
-                        if (objectBykey != null)
+                        foreach (var key in errorsResponse.error.Keys)
                         {
-                            TextBlock textBlock = objectBykey as TextBlock;
-                            textBlock.Text = "* " + value;
+                            var objectBykey = this.FindName(key);
+                            var value = errorsResponse.error[key];
+                            if (objectBykey != null)
+                            {
+                                TextBlock textBlock = objectBykey as TextBlock;
+                                textBlock.Text = "* " + value;
 
+                            }
                         }
                     }
                 }
             }
+            //// validate data.
+            //this.currentMember.firstName = this.FirstName.Text;
+            //this.currentMember.lastName = this.LastName.Text;
+            //this.currentMember.avatar = this.AvatarUrl.Text;
+            //this.currentMember.address = this.Address.Text;
+            //this.currentMember.introduction = this.Introduction.Text;
+            //this.currentMember.phone = this.Phone.Text;
+            //this.currentMember.email = this.Email.Text;
+            //this.currentMember.password = this.Password.Password;
+
+            //string jsonMember = JsonConvert.SerializeObject(this.currentMember);
+
+            //HttpClient httpClient = new HttpClient();
+            //var content = new StringContent(jsonMember, Encoding.UTF8, "application/json");
+            //var response = httpClient.PostAsync(APIHandle.MEMBER_REGISTER, content);
+            //var contents = await response.Result.Content.ReadAsStringAsync();
+            //if (response.Result.StatusCode == HttpStatusCode.Created)
+            //{
+            //    var rootFrame = Window.Current.Content as Frame;
+            //    rootFrame.Navigate(typeof(Views.Sign_In));
+            //}
+            //else
+            //{
+            //    ErrorResponse errorsResponse = JsonConvert.DeserializeObject<ErrorResponse>(contents);
+            //    if (errorsResponse.error.Count > 0)
+            //    {
+            //        foreach (var key in errorsResponse.error.Keys)
+            //        {
+            //            var objectBykey = this.FindName(key);
+            //            var value = errorsResponse.error[key];
+            //            if (objectBykey != null)
+            //            {
+            //                TextBlock textBlock = objectBykey as TextBlock;
+            //                textBlock.Text = "* " + value;
+
+            //            }
+            //        }
+            //    }
+            //}
          
         }
 
@@ -179,70 +231,111 @@ namespace MusicApp.Views
 
         }
 
-        public void ValidateEmail()
+        private async void Upload_Image(object sender, RoutedEventArgs e)
         {
-            var inputEmail = Email.Text;
-            if (string.IsNullOrWhiteSpace(inputEmail) || !Regex.IsMatch(inputEmail, @"\w+([-+.']\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*"))
+            FileOpenPicker openPicker = new FileOpenPicker();
+            openPicker.ViewMode = PickerViewMode.Thumbnail;
+            openPicker.SuggestedStartLocation = PickerLocationId.PicturesLibrary;
+            openPicker.FileTypeFilter.Add(".jpg");
+            openPicker.FileTypeFilter.Add(".jpeg");
+            openPicker.FileTypeFilter.Add(".png");
+
+            this.photo = await openPicker.PickSingleFileAsync();
+            HttpClient httpClient = new HttpClient();
+            currentUploadUrl = await httpClient.GetStringAsync(Services.APIHandle.GET_UPLOAD_URL);
+            Debug.WriteLine("Upload url: " + currentUploadUrl);
+            HttpUploadFile(currentUploadUrl, "myFile", "image/png");
+
+        }
+
+        public static bool ValidateEmail(string input, TextBlock textBlock)
+        {
+            Regex regex = new Regex(@"^[_A-Za-z0-9-\\+]+(\\.[_A-Za-z0-9-]+)*@"
+                                    + "[A-Za-z0-9-]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$");
+            if (string.IsNullOrWhiteSpace(input))
             {
-                email.Text = "The email is invalid";
-                return;
+                textBlock.Text = "*Email can't be empty or null";
+                textBlock.Foreground = new SolidColorBrush(Colors.Red);
+
+                return false;
+            }
+            else if (!regex.IsMatch(input))
+            {
+                textBlock.Text = "*Invalid: example@gmail.com";
+                textBlock.Foreground = new SolidColorBrush(Colors.Red);
+
+                return false;
+            }
+            else
+            {
+                textBlock.Text = "";
+                return true;
+            }
+
+        }
+
+        public static bool ValidatePassword(string input, TextBlock textBlock)
+        {
+            if (input.Length > 0)
+            {
+                if (input.Length < 6 || input.Length > 24)
+                {
+                    textBlock.Text = "*Must be from 6 to 24 characters";
+                    textBlock.Foreground = new SolidColorBrush(Colors.Red);
+                    return false;
+                }
+                else
+                {
+                    textBlock.Text = "";
+                    return true;
+                }
+            }
+            else
+            {
+                textBlock.Text = "* Password can't be empty or null";
+                textBlock.Foreground = new SolidColorBrush(Colors.Red);
+                return false;
             }
         }
 
-        public void ValidatePassword()
+        public static bool ValidateText(string input, TextBlock textBlock)
         {
-            var inputPassword = Password.Password;
-            if (string.IsNullOrWhiteSpace(inputPassword))
+            if (input.Length > 0)
             {
-                password.Text = "The password is invalid";
+                textBlock.Text = "";
+                return true;
             }
-
-            if (inputPassword.Length < 8)
+            else
             {
-                password.Text = "Password is too short";
+                textBlock.Text = "*Not empty or null";
+                textBlock.Foreground = new SolidColorBrush(Colors.Red);
+                return false;
             }
         }
 
-        public void ValidateFirstName()
+        public static bool ValidatePhone(string input, TextBlock textBlock)
         {
-            var inputFirstName = FirstName.Text;
-            if (string.IsNullOrWhiteSpace(inputFirstName))
+            Regex regex = new Regex(@"^\s*\+?\s*([0-9][\s-]*){10,13}$");
+            if (input.Length > 0)
             {
-                firstName.Text = "The first name must not be null or empty";
+                if (!regex.IsMatch(input))
+                {
+                    textBlock.Text = "*Must be 10 or 11 numbers";
+                    textBlock.Foreground = new SolidColorBrush(Colors.Red);
+                    return false;
+                }
+                else
+                {
+                    textBlock.Text = "";
+                    return true;
+                }
             }
-
-            if (inputFirstName.Length > 30)
+            else
             {
-                firstName.Text = "First name is too long";
+                textBlock.Text = "*Not empty or null";
+                textBlock.Foreground = new SolidColorBrush(Colors.Red);
+                return false;
             }
-        }
-
-        public void ValidateLastName()
-        {
-            var inputLastName = FirstName.Text;
-            if (string.IsNullOrWhiteSpace(inputLastName))
-            {
-                firstName.Text = "The last name must not be null or empty";
-            }
-
-            if (inputLastName.Length > 30)
-            {
-                firstName.Text = "Last name is too long";
-            }
-        }
-
-        public void ValidateAvatar()
-        {
-            var inputAvatar = AvatarUrl.Text;
-            if (string.IsNullOrWhiteSpace(inputAvatar))
-            {
-                avatar.Text = "The avatar url must not be null or empty";
-            }
-        }
-
-        public void ValidatePhone()
-        {
-
         }
     }
 

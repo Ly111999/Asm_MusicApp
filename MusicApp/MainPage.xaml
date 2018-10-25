@@ -26,12 +26,7 @@
                             <TextBlock Text="Home" Margin="0, 3, 0, 0"/>
                         </StackPanel>
                     </RadioButton>
-                    <RadioButton Tag="Register" Style="{ThemeResource TextBlockButtonStyle}" Margin="0, 0, 0, 30" Click="RadioButton_Click">
-                        <StackPanel Orientation="Horizontal">
-                            <SymbolIcon Symbol="AddFriend" Margin="0, 0, 15, 0"/>
-                            <TextBlock Text="Register" Margin="0, 3, 0, 0"/>
-                        </StackPanel>
-                    </RadioButton>
+                   
                     <RadioButton Tag="My_account" Style="{ThemeResource TextBlockButtonStyle}" Margin="0, 0, 0, 30" Click="RadioButton_Click">
                         <StackPanel Orientation="Horizontal">
                             <SymbolIcon Symbol="Contact" Margin="0, 0, 15, 0"/>
@@ -44,13 +39,8 @@
                             <TextBlock Text="My Song" Margin="0, 3, 0, 0"/>
                         </StackPanel>
                     </RadioButton>
-                    <RadioButton Tag="Login" Style="{ThemeResource TextBlockButtonStyle}" Margin="0, 0, 0, 10" Click="RadioButton_Click">
-                        <StackPanel Orientation="Horizontal">
-                            <SymbolIcon Symbol="Contact2" Margin="0, 0, 15, 0"/>
-                            <TextBlock Text="Login" Margin="0, 3, 0, 0"/>
-                        </StackPanel>
-                    </RadioButton>
-                    <RadioButton Tag="Logout" Style="{ThemeResource TextBlockButtonStyle}" Margin="0, 15, 0, 10" Click="RadioButton_Click">
+                  
+                    <RadioButton Tag="Logout" Style="{ThemeResource TextBlockButtonStyle}" Margin="0, 0, 0, 10" Click="RadioButton_Click">
                         <StackPanel Orientation="Horizontal">
                             <SymbolIcon Symbol="BlockContact" Margin="0, 0, 15, 0"/>
                             <TextBlock Text="Log out" Margin="0, 3, 0, 0"/>

@@ -14,8 +14,15 @@
         </StackPanel>
         <TextBlock Text="Information Account" FontSize="25" Margin="10,5,0,0" FontWeight="Bold"></TextBlock>
         <StackPanel Orientation="Vertical" HorizontalAlignment="Left">
-            <Image x:Name="avatar" Width="200" Height="400" Margin="30,20,0,0"/>
-            <StackPanel Orientation="Horizontal" Margin="100,-35,0,0">
+            <StackPanel Width="160" Height="160" Margin="130, 150, 0 ,0">
+                <Border BorderThickness="1" BorderBrush="Black" CornerRadius="20">
+                    <Image x:Name="avatar" Width="200" Height="160"></Image>
+                </Border>
+            </StackPanel>
+            <!--<PersonPicture x:Name="avatar" Width="200" Height="400" Margin="150,120,0,0"/>-->
+            <TextBlock/>
+            <TextBlock/>
+            <StackPanel Orientation="Horizontal" Margin="160,0,0,0">
                 <StackPanel Orientation="Vertical" Width="160" >
                     <TextBlock Text="Name" Margin="6"/>
                     <TextBlock Text="Email" Margin="6"/>

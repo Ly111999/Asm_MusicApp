@@ -15,10 +15,11 @@
         </StackPanel>
         <TextBlock Text="Create new account" FontSize="25" Margin="10,8,0,30" FontWeight="Bold"/>
         <ScrollViewer>
-            <StackPanel Margin="50,90,0,0" HorizontalAlignment="Left" Width="450">
-                <TextBox x:Name="Email" Header="Email" PlaceholderText="Enter your email" />
+            <StackPanel Margin="150,90,0,0" HorizontalAlignment="Left" Width="450">
+                <TextBlock Text="Music App" FontSize="25" Margin="160,0,0,60"/>
+                <TextBox x:Name="Email" Header="Email" PlaceholderText="Enter your email *" />
                 <TextBlock x:Name="email" Foreground="Red"/>
-                <PasswordBox x:Name="Password" Header="Password" Margin="0, 20, 0 , 0" PlaceholderText="Enter your password"/>
+                <PasswordBox x:Name="Password" Header="Password" Margin="0, 20, 0 , 0" PlaceholderText="Enter your password *"/>
                 <TextBlock x:Name="password" Foreground="Red"/>
                 <Grid Margin="0, 20, 0 , 0">
                     <Grid.ColumnDefinitions>
@@ -29,22 +30,24 @@
                         <RowDefinition Height="0.5*"/>
                         <RowDefinition Height="0.5*"/>
                     </Grid.RowDefinitions>
-                    <TextBox x:Name="FirstName" Header="First Name" Grid.Row="0"  Grid.Column="0" PlaceholderText="Enter your firstname" Margin="0, 0, 10, 0"/>
+                    <TextBox x:Name="FirstName" Header="First Name" Grid.Row="0"  Grid.Column="0" PlaceholderText="Enter your firstname *" Margin="0, 0, 10, 0"/>
                     <TextBlock x:Name="firstName" Grid.Row="1" Grid.Column="0" Foreground="Red"/>
-                    <TextBox x:Name="LastName" Header="Last Name" Grid.Row="0" Grid.Column="1" PlaceholderText="Enter your lastname"/>
+                    <TextBox x:Name="LastName" Header="Last Name" Grid.Row="0" Grid.Column="1" PlaceholderText="Enter your lastname *"/>
                     <TextBlock x:Name="lastName" Grid.Row="1" Grid.Column="1" Foreground="Red"/>
                 </Grid>
                 <TextBox x:Name="AvatarUrl" Header="Avatar Link" Margin="0, 20, 0 , 0"/>
                 <TextBlock x:Name="avatar" Foreground="Red"/>
-
+                
                 <Image x:Name="Avatar" Width="150" Height="100" HorizontalAlignment="Left" Margin="20"/>
-
-                <Button Content="Capture Your Photo" Margin="0, 20, 0 , 0" Click="Choose_Image"/>
-                <TextBox x:Name="Phone" Header="Phone Number" PlaceholderText="Enter your phone" Margin="0, 20, 0 , 0"/>
+                <StackPanel Orientation="Horizontal">
+                    <Button Content="Capture Your Photo" Margin="0, 20, 30 , 0" Click="Choose_Image"/>
+                    <Button Content="Select Your Photo" Margin="0, 20, 0 , 0" Click="Upload_Image"/>
+                </StackPanel>
+                <TextBox x:Name="Phone" Header="Phone Number" PlaceholderText="Enter your phone *" Margin="0, 20, 0 , 0"/>
                 <TextBlock x:Name="phone" Foreground="Red"/>
-                <TextBox x:Name="Address" Header="Address" AcceptsReturn="True" Height="100" PlaceholderText="Enter your address" Margin="0, 20, 0 , 0"/>
+                <TextBox x:Name="Address" Header="Address" AcceptsReturn="True" Height="100" PlaceholderText="Enter your address *" Margin="0, 20, 0 , 0"/>
                 <TextBlock x:Name="address" Foreground="Red"/>
-                <TextBox x:Name="Introduction" Header="Introduction" PlaceholderText="Enter your introduction" AcceptsReturn="True" Height="100" Margin="0, 20, 0 , 0"/>
+                <TextBox x:Name="Introduction" Header="Introduction" PlaceholderText="Enter your introduction " AcceptsReturn="True" Height="100" Margin="0, 20, 0 , 0"/>
                 <TextBlock x:Name="introduction" Foreground="Red"/>
                 <TextBlock Text="Gender" Margin="0, 20, 0 , 0"/>
                 <StackPanel Orientation="Horizontal" Margin="0, 20, 0 , 0">
@@ -55,7 +58,7 @@
                 <CalendarDatePicker x:Name="BirthdayPicker" Header="Birthday" Width="250" Margin="0, 20, 0 , 0" DateChanged="BirthdayPicker_DateChanged"/>
                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" Margin="0, 40, 0 , 0">
                     <Button Content="Sign up" Width="100" Margin="0, 0, 20 , 0" Click="Submit"/>
-                    <Button Content="Sign in" Width="100" Click="Sign_in" />
+                    <Button Content="Cancel" Width="100" Click="Sign_in" />
                 </StackPanel>
                 <TextBlock/><TextBlock/><TextBlock/>
             </StackPanel>

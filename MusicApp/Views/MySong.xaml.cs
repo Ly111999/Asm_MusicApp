@@ -8,10 +8,12 @@ using System.Net;
 using System.Net.Http;
 using System.Runtime.InteropServices.WindowsRuntime;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
 using Windows.Storage;
+using Windows.UI;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
@@ -32,6 +34,12 @@ namespace MusicApp.Views
     /// </summary>
     public sealed partial class MySong : Page
     {
+        private bool validName = false;
+        private bool validSinger = false;
+        private bool validAuthor = false;
+        private bool validLink = false;
+        private bool validThumbnail = false;
+
         private ObservableCollection<Song> listSong;
         public static string TokenKey = null;
         private int _currentIndex = 0;
@@ -100,6 +108,14 @@ namespace MusicApp.Views
 
         private async void Add_Song(object sender, RoutedEventArgs e)
         {
+            //validate client
+            ValidateText(Txt_name.Text, Name);
+            ValidateText(Txt_thumbnail.Text, Thumbnail);
+            ValidateText(Txt_description.Text, Description);
+            ValidateText(Txt_singer.Text, Singer);
+            ValidateText(Txt_author.Text, Author);
+            ValidateLink(Txt_link.Text, Link);
+            // get meg error serve
             HttpClient client = new HttpClient();
             this.currentSong.name = this.Txt_name.Text;
             this.currentSong.description = this.Txt_description.Text;
@@ -141,15 +157,29 @@ namespace MusicApp.Views
             this.Txt_thumbnail.Text = String.Empty;
             this.Txt_link.Text = String.Empty;
         }
+        
         private void ticktock(object sender, object e)
         {
-            MinDuration.Text = MediaElement.Position.Minutes + ":" + MediaElement.Position.Seconds;
-            Progress.Minimum = 0;
-            Progress.Maximum = MediaElement.NaturalDuration.TimeSpan.TotalSeconds;
-            MaxDuration.Text = MediaElement.NaturalDuration.TimeSpan.Minutes + ":" + MediaElement.NaturalDuration.TimeSpan.Seconds;
-            Progress.Value = MediaElement.Position.TotalSeconds;
+            if (MediaElement.Position.Seconds < 10)
+            {
+                MinDuration.Text = MediaElement.Position.Minutes + ":0" + MediaElement.Position.Seconds;
+            }
+            else
+            {
+                MinDuration.Text = MediaElement.Position.Minutes + ":" + MediaElement.Position.Seconds;
+            }
+            if (MediaElement.NaturalDuration.TimeSpan.Seconds < 10)
+            {
+                MaxDuration.Text = MediaElement.NaturalDuration.TimeSpan.Minutes + ":0" + MediaElement.NaturalDuration.TimeSpan.Seconds;
+            }
+            else
+            {
+                MaxDuration.Text = MediaElement.NaturalDuration.TimeSpan.Minutes + ":" + MediaElement.NaturalDuration.TimeSpan.Seconds;
+            }
+            time_play.Minimum = 0;
+            time_play.Maximum = MediaElement.NaturalDuration.TimeSpan.TotalSeconds;
+            time_play.Value = MediaElement.Position.TotalSeconds;
         }
-
 
         private void currentSongs(object sender, TappedRoutedEventArgs e)
         {
@@ -252,5 +282,106 @@ namespace MusicApp.Views
             Debug.WriteLine(MediaElement.NaturalDuration.TimeSpan.TotalSeconds);
             this.Status_song.Text = currentSong.name + " - " + currentSong.singer;
         }
+
+        private void Songs(Song songs)
+        {
+            try
+            {
+                this.Name_song.Text = songs.name;
+                this.Singer.Text = songs.singer;
+                this.MediaElement.Source = new Uri(songs.link);
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                throw;
+            }
+
+        }
+
+        private void AutoNext(ObservableCollection<Song> songs, ListView list)
+        {
+            if (_currentIndex < ListSong.Count - 1 && _currentIndex >= 0)
+            {
+                _currentIndex++;
+                Songs(ListSong[_currentIndex]);
+                Do_play();
+                MyListSong.SelectedIndex = _currentIndex;
+            }
+            else
+            {
+                _currentIndex = 0;
+                Songs(ListSong[_currentIndex]);
+                Do_play();
+                MyListSong.SelectedIndex = _currentIndex;
+
+            }
+
+        }
+
+        private void Check_song_ended(object sender, RoutedEventArgs e)
+        {
+            if (MyListSong.SelectedIndex == (ListSong.Count - 1))
+            {
+                Debug.WriteLine(1);
+                AutoNext(ListSong, MyListSong);
+                PlayButton.Icon = new SymbolIcon(Symbol.Pause);
+                _isPlaying = true;
+            }
+            else
+            {
+                Debug.WriteLine(2);
+                AutoNext(ListSong, MyListSong);
+            }
+            
+        }
+
+        private void time_play_ValueChanged(object sender, RangeBaseValueChangedEventArgs e)
+        {
+            double SliderValue = time_play.Value;
+            TimeSpan ts = TimeSpan.FromSeconds(SliderValue);
+            MediaElement.Position = ts;
+        }
+
+        public static bool ValidateText(string input, TextBlock textBlock)
+        {
+            if (input.Length > 0)
+            {
+                textBlock.Text = "";
+                return true;
+            }
+            else
+            {
+                textBlock.Text = "*Not empty or null";
+                textBlock.Foreground = new SolidColorBrush(Colors.Red);
+                return false;
+            }
+        }
+
+        public static bool ValidateLink(string input, TextBlock textBlock)
+        {
+            Regex regex = new Regex(@"((https?|ftp|gopher|telnet|file|notes|ms-help):((//)|(\\\\))+[\w\d:#@%/;$()~_?\+-=\\\.&]*\.mp3)");
+
+            if (string.IsNullOrWhiteSpace(input))
+            {
+                textBlock.Text = "*Link song can't be empty or null";
+                textBlock.Foreground = new SolidColorBrush(Colors.Red);
+
+                return false;
+            }
+            else if (!regex.IsMatch(input))
+            {
+                textBlock.Text = "*Invalid: example.mp3";
+                textBlock.Foreground = new SolidColorBrush(Colors.Red);
+
+                return false;
+            }
+            else
+            {
+                textBlock.Text = "";
+                return true;
+            }
+        }
     }
+    
 }

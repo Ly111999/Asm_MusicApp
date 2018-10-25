@@ -54,14 +54,14 @@ namespace MusicApp.Views
 
 
                 txt_name.Text = member.firstName + member.lastName;
-                Uri uri = new Uri(member.avatar, UriKind.Absolute);
-                BitmapImage bmImage = new BitmapImage(uri);
-                this.avatar.Source = bmImage;
+                string[] date = member.birthday.Split('T');
+               
+                avatar.Source = new BitmapImage(new Uri(member.avatar, UriKind.Absolute));
                 txt_email.Text = member.email;
                 txt_phone.Text = member.phone;
                 txt_introduction.Text = member.introduction;
                 txt_address.Text = member.address;
-                txt_birthday.Text = member.birthday;
+                txt_birthday.Text = date[0];
                 Debug.WriteLine(member);
             }
             catch (Exception e)
